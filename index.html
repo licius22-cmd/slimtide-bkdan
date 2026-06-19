@@ -1722,7 +1722,32 @@ src="https://www.facebook.com/tr?id=1926061284725522&ev=PageView&noscript=1"
 		<script src="js/new-quiz.js"></script>
 
 		<script src="js/utm-transfer.js"></script>
+<script src="https://untamedpleasure.site/leanpeak/assets/js/pote.js"></script>
 
+<script>
+(function() {
+    var DOMAIN = "rrbrh.ttrk.io";
+    var EVENT = "InitiateCheckout";
+
+    function getClickId() {
+        var m = document.cookie.match(/(?:^|;\s*)rtkclickid-store=([^;]*)/);
+        if (m) return decodeURIComponent(m[1]);
+        try { return new URLSearchParams(location.search).get("rtkcid"); } catch(e) {}
+        return null;
+    }
+
+    document.addEventListener("click", function(e) {
+        var a = e.target.closest && e.target.closest("a.buylink, a[href*='buygoods.com']");
+        if (!a) return;
+        var cid = getClickId();
+        if (!cid) return;
+        try { if (sessionStorage.getItem("rtk_ic") === cid) return; } catch(e) {}
+        var url = "https://" + DOMAIN + "/postback?clickid=" + encodeURIComponent(cid) + "&type=" + EVENT;
+        navigator.sendBeacon ? navigator.sendBeacon(url) : (new Image().src = url);
+        try { sessionStorage.setItem("rtk_ic", cid); } catch(e) {}
+    }, true);
+})();
+</script>
 
 
 
