@@ -1722,7 +1722,6 @@ src="https://www.facebook.com/tr?id=1926061284725522&ev=PageView&noscript=1"
 
 		<script src="js/new-quiz.js"></script>
 
-		<script src="js/utm-transfer.js"></script>
 <script src="https://untamedpleasure.site/leanpeak/assets/js/pote.js"></script>
 
 <script>
@@ -1819,29 +1818,6 @@ src="https://www.facebook.com/tr?id=1926061284725522&ev=PageView&noscript=1"
 })();
 </script>
 
-<script>
-    (function() {
-        function corrigirLinksBuyGoods() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const realSubid = urlParams.get('subid');
-
-            if (!realSubid) return; 
-
-            const botoes = document.querySelectorAll('a[href*="buygoods.com/secure/checkout.html"]');
-            
-            botoes.forEach(function(botao) {
-                let href = botao.getAttribute('href');
-                
-                if (href && !href.includes('&subid=' + realSubid)) {
-                    botao.setAttribute('href', href + '&subid=' + encodeURIComponent(realSubid));
-                }
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", corrigirLinksBuyGoods);
-        setInterval(corrigirLinksBuyGoods, 1000); // Mantém ativo caso a VTurb mexer depois
-    })();
-    </script>
 
 
 </main></body></html>
