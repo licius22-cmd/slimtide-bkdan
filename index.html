@@ -1818,6 +1818,78 @@ src="https://www.facebook.com/tr?id=1926061284725522&ev=PageView&noscript=1"
 })();
 </script>
 
+		<script>
+(function () {
+    var STORE = 'sb_clickid';
+    var KEYS = ['subid', 'rtkcid', 'clickid'];
+
+    function readCookie(n) {
+        var m = document.cookie.match(new RegExp('(?:^|;\\s*)' + n + '=([^;]*)'));
+        return m ? decodeURIComponent(m[1]) : '';
+    }
+    function writeCookie(n, v) {
+        try {
+            var exp = new Date(Date.now() + 30 * 864e5).toUTCString();
+            var host = location.hostname.replace(/^www\./, '');
+            document.cookie = n + '=' + encodeURIComponent(v) + ';expires=' + exp + ';path=/;domain=.' + host + ';SameSite=Lax';
+            document.cookie = n + '=' + encodeURIComponent(v) + ';expires=' + exp + ';path=/;SameSite=Lax';
+        } catch (e) {}
+    }
+
+    // Captura o clickid assim que existir e persiste
+    function capturar() {
+        try {
+            var p = new URLSearchParams(location.search);
+            for (var i = 0; i < KEYS.length; i++) {
+                var v = p.get(KEYS[i]);
+                if (v) { writeCookie(STORE, v); try { localStorage.setItem(STORE, v); } catch (e) {} return; }
+            }
+        } catch (e) {}
+    }
+
+    // Resolve por prioridade: URL > cookie próprio > localStorage > cookie RedTrack
+    function resolveSubid() {
+        try {
+            var p = new URLSearchParams(location.search);
+            for (var i = 0; i < KEYS.length; i++) { var v = p.get(KEYS[i]); if (v) return v; }
+        } catch (e) {}
+        var c = readCookie(STORE);             if (c) return c;
+        try { var l = localStorage.getItem(STORE); if (l) return l; } catch (e) {}
+        var rt = readCookie('rtkclickid-store'); if (rt) return rt;
+        return '';
+    }
+
+    // Remove qualquer subid existente e anexa o correto; preserva o redirect= base64
+    function setSubid(href, subid) {
+        var hashIdx = href.indexOf('#');
+        var hash = hashIdx > -1 ? href.slice(hashIdx) : '';
+        var base = hashIdx > -1 ? href.slice(0, hashIdx) : href;
+        var qIdx = base.indexOf('?');
+        if (qIdx === -1) return base + '?subid=' + encodeURIComponent(subid) + hash;
+        var path = base.slice(0, qIdx);
+        var parts = base.slice(qIdx + 1).split('&').filter(function (kv) {
+            return kv && kv.split('=')[0] !== 'subid';
+        });
+        parts.push('subid=' + encodeURIComponent(subid));
+        return path + '?' + parts.join('&') + hash;
+    }
+
+    function corrigirLinksBuyGoods() {
+        var subid = resolveSubid();
+        if (!subid) return;
+        document.querySelectorAll('a[href*="buygoods.com/secure/checkout.html"]').forEach(function (botao) {
+            var href = botao.getAttribute('href');
+            if (!href) return;
+            var novo = setSubid(href, subid);
+            if (novo !== href) botao.setAttribute('href', novo);
+        });
+    }
+
+    capturar();
+    document.addEventListener("DOMContentLoaded", corrigirLinksBuyGoods);
+    setInterval(corrigirLinksBuyGoods, 1000); // VTurb recria os botões; mantém o subid
+})();
+</script>
 
 
 </main></body></html>
